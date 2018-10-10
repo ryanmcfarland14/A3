@@ -107,13 +107,23 @@ public class Player extends GameObject {
 	public void checkIfDead() {
 		if (health <= 0) {// player is dead, game over!
 
-			if (extraLives == 0) {
+			if (extraLives == 0 && game.gameState == STATE.Survival) {
+				game.previousGameState = game.gameState;
+				game.gameState = STATE.GameOver;
+				Sound.stopSoundMenu();
+				Sound.stopSoundSurvival();
+				Sound.playSoundOver();
+			}
+			
+			if (extraLives == 0 && game.gameState == STATE.Game ) {
 				game.previousGameState = game.gameState;
 				game.gameState = STATE.GameOver;
 				Sound.stopSoundMenu();
 				Sound.stopSoundWaves();
 				Sound.playSoundOver();
 			}
+			
+	
 
 			else if (extraLives > 0) {// has an extra life, game continues
 				extraLives--;
