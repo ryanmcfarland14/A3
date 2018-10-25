@@ -4,6 +4,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 import mainGame.Game.STATE;
+import mainGame.Player.Ability;
 
 /**
  * Handles key input from the user
@@ -100,12 +101,12 @@ public class KeyInput extends KeyAdapter {
 				}
 
 				if (key == KeyEvent.VK_ENTER) {
-					ability = upgrades.getAbility();
-					if (ability.equals("clearScreen")) {
+					Ability curability = player.getAbility();
+					if (curability.equals(Ability.ClearScreen)) {
 						upgrades.clearScreenAbility();
-					} else if (ability.equals("levelSkip")) {
+					} else if (curability.equals(Ability.LevelSkip)) {
 						upgrades.levelSkipAbility();
-					} else if (ability.equals("freezeTime")) {
+					} else if (curability.equals(Ability.FreezeTime)) {
 						upgrades.freezeTimeAbility();
 					}
 				}

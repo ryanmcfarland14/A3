@@ -21,13 +21,14 @@ public class Player extends GameObject {
 	Random r = new Random();
 	Handler handler;
 	private HUD hud;
+	private int regenTick = 0;
 	private Game game;
 	private int health = 0;
 	public int playerSpeed = 10;
 	private boolean doubleHealth = false;
 	private boolean regen = false;
 	private int score = 0;
-	private int abilityUses = 0;
+	private int abilityUses = 3;
 	private int extraLives = 0;
 	private Ability ability = Ability.None;
 	private int damage;
@@ -76,9 +77,10 @@ public class Player extends GameObject {
 		health = startingHealth;
 		doubleHealth = false;
 		regen = false;
+		regenTick = 0;
 		extraLives = 0;
 		ability = Ability.None;
-		abilityUses = 0;
+		abilityUses = 3;
 		damage = startingDamage;
 		playerWidth = startingPlayerWidth;
 		playerHeight = startingPlayerHeight;
@@ -102,28 +104,31 @@ public class Player extends GameObject {
 		hud.tickScore();
 		hud.updateHealth(health);
 		hud.updateLivesText(extraLives);
+		
+		
+		if(regen) {
+			if(regenTick>=25) {
+				regenTick = 0;
+				if(health<=100) {
+					health++;
+				}
+			} else {
+				regenTick++;
+			}
+		}
+	
 	}
 
 	public void checkIfDead() {
 		if (health <= 0) {// player is dead, game over!
 
-			if (extraLives == 0 && game.gameState == STATE.Survival) {
-				game.previousGameState = game.gameState;
-				game.gameState = STATE.GameOver;
-				Sound.stopSoundMenu();
-				Sound.stopSoundSurvival();
-				Sound.playSoundOver();
-			}
-			
-			if (extraLives == 0 && game.gameState == STATE.Game ) {
+			if (extraLives == 0) {
 				game.previousGameState = game.gameState;
 				game.gameState = STATE.GameOver;
 				Sound.stopSoundMenu();
 				Sound.stopSoundWaves();
 				Sound.playSoundOver();
 			}
-			
-	
 
 			else if (extraLives > 0) {// has an extra life, game continues
 				extraLives--;
@@ -213,12 +218,15 @@ public class Player extends GameObject {
 	public void activateTriggeredAbility(Ability ability, int uses) {
 		this.ability = ability;
 		abilityUses = uses;
+		hud.updateAbilityText(ability, uses);
 	}
 	
 	public void decrementAbilityUses() {
 		abilityUses--;
+		hud.updateAbilityText(ability, abilityUses);
 		if (abilityUses < 1) {
 			ability = Ability.None;
+			hud.updateAbilityText(ability, abilityUses);
 		}
 	}
 	
