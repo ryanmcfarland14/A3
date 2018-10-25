@@ -149,9 +149,11 @@ public class Game extends Canvas implements Runnable {
 
 			if (System.currentTimeMillis() - timer > 1000) {
 				timer += 1000;
-				/*System.out.println("FPS: " + frames);
+				/*
+				System.out.println("FPS: " + frames);
 				System.out.println(gameState);
-				System.out.println(Spawn1to10.LEVEL_SET);*/
+				System.out.println(Spawn1to10.LEVEL_SET);
+				*/
 				frames = 0;
 			}
 		}
@@ -168,7 +170,6 @@ public class Game extends Canvas implements Runnable {
 			handler.tick();// ALWAYS TICK HANDLER, NO MATTER IF MENU OR GAME SCREEN
 			if (gameState == STATE.Game) {// game is running
 				// add game theme
-				this.unPause();
 				hud.tick();
 				if (Spawn1to10.LEVEL_SET == 1) {// user is on levels 1 thru 10, update them
 					spawner.tick();
