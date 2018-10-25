@@ -72,6 +72,7 @@ public class Menu {
 
 	public void tick() {
 		timer--;
+		game.unPause();
 		if (timer <= 0) {
 			handler.object.clear();
 			colorIndex = r.nextInt(6);

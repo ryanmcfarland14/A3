@@ -37,7 +37,7 @@ public class Upgrades {
 
 	public void clearScreenAbility() {
 		handler.clearEnemies();
-		player.decrementAbilityUses();
+		player.setAbilityUses(player.getAbilityUses() - 1);
 		if (player.getAbilityUses() == 0) {
 			ability = "";
 		}
@@ -63,15 +63,17 @@ public class Upgrades {
 		} else if (Spawn1to10.LEVEL_SET == 2) {
 			spawner2.skipLevel();
 		}
-		player.decrementAbilityUses();
+		player.setAbilityUses(player.getAbilityUses() - 1);
 		if (player.getAbilityUses() == 0) {
 			ability = "";
 		}
+
+		player.decrementAbilityUses();
 	}
 
 	public void freezeTimeAbility() {
 		handler.pause();
-		player.decrementAbilityUses();
+		player.setAbilityUses(player.getAbilityUses() - 1);
 		if (player.getAbilityUses() == 0) {
 			ability = "";
 		}
@@ -92,37 +94,35 @@ public class Upgrades {
 	 *            is to the image of the upgrade that was pressed by the user
 	 */
 	public void activateUpgrade(String path) {
-		System.out.println("UPGRADES CASE MATCH");
 		switch (path) {
-			case "images/clearscreenability.png":
+			case "../images/clearscreenability.png":
 				player.activateTriggeredAbility(Ability.ClearScreen, clearScreenUses);
 				break;
-			case "images/decreaseplayersize.png":
+			case "../images/decreaseplayersize.png":
 				player.activateReducedSize();
 				break;
-			case "images/extralife.png":
+			case "../images/extralife.png":
 				player.setExtraLives(player.getExtraLives() + 1);
 				break;
-			case "images/healthincrease.png":
+			case "../images/healthincrease.png":
 				player.activateDoubleHealth();
 				break;
-			case "images/healthregeneration.png":
+			case "../images/healthregeneration.png":
 				player.activateRegen();
 				break;
-			case "images/improveddamageresistance.png":
+			case "../images/improveddamageresistance.png":
 				player.activateDamageResistance();
 				break;
-			case "images/levelskipability.png":
+			case "../images/levelskipability.png":
 				player.activateTriggeredAbility(Ability.LevelSkip, levelSkipUses);
 				break;
-			case "images/freezetimeability.png":
+			case "../images/freezetimeability.png":
 				player.activateTriggeredAbility(Ability.FreezeTime, freezeTimeUses);
 				break;
-			case "images/speedboost.png":
+			case "../images/speedboost.png":
 				player.activateSpeedBoost();
 				break;
 			default:
-				System.out.println("NOTHING SELECTED: " + path);
 				break;
 		}
 

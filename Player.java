@@ -21,27 +21,30 @@ public class Player extends GameObject {
 	Random r = new Random();
 	Handler handler;
 	private HUD hud;
-	private int regenTick = 0;
 	private Game game;
 	private int health = 0;
 	public int playerSpeed = 10;
 	private boolean doubleHealth = false;
 	private boolean regen = false;
 	private int score = 0;
-	private int abilityUses = 3;
+	private int abilityUses = 0;
 	private int extraLives = 0;
 	private Ability ability = Ability.None;
 	private int damage;
 	private int playerWidth, playerHeight;
+	private boolean isShooting;
+	private double bulletX;
+	private double bulletY;
+	private int bulletSpeed;
 	
 	private final int reducedDamageValue = 1;
-	private final double speedBoostMod = 2;
+	private final double speedBoostMod = 1000; //Originally 2
 	
 	private final int reducedPlayerSize = 24;
 	
 	
 	private final int startingHealth = 100;
-	private final int startingDamage = 2;
+	private final int startingDamage = 4;//Originally 2
 	private final int startingPlayerWidth = 32;
 	private final int startingPlayerHeight = 32;
 	private final int startingPlayerSpeed = 10;
@@ -63,6 +66,13 @@ public class Player extends GameObject {
 		playerHeight = 32;
 	}
 	
+	public int getHealth() {
+		return health;
+	}
+
+	public void setHealth(int health) {
+		this.health = health;
+	}
 	public void initialize() {
 		switch (game.gameState) {
 			case Game:
@@ -77,10 +87,9 @@ public class Player extends GameObject {
 		health = startingHealth;
 		doubleHealth = false;
 		regen = false;
-		regenTick = 0;
 		extraLives = 0;
 		ability = Ability.None;
-		abilityUses = 3;
+		abilityUses = 0;
 		damage = startingDamage;
 		playerWidth = startingPlayerWidth;
 		playerHeight = startingPlayerHeight;
@@ -105,40 +114,40 @@ public class Player extends GameObject {
 		hud.updateHealth(health);
 		hud.updateLivesText(extraLives);
 		
-		
-		if(regen) {
-			if(regenTick>=25) {
-				regenTick = 0;
-				if(health<=100) {
-					health++;
-				}
-			} else {
-				regenTick++;
-			}
+	/*	if (isShooting == true) {
+			handler.addObject(new PlayerBullets(this.x, this.y, bulletX, bulletY, this.hud, ID.PlayerBullets,
+					this.handler));
 		}
 	
+	*/
 	}
-
 	public void checkIfDead() {
 		if (health <= 0) {// player is dead, game over!
 
-			if (extraLives == 0) {
+			if (extraLives == 0 && game.gameState == STATE.Survival) {
+				game.previousGameState = game.gameState;
+				game.gameState = STATE.GameOver;
+				Sound.stopSoundMenu();
+				Sound.stopSoundSurvival();
+				Sound.playSoundOver();
+			}
+			
+			if (extraLives == 0 && game.gameState == STATE.Game ) {
 				game.previousGameState = game.gameState;
 				game.gameState = STATE.GameOver;
 				Sound.stopSoundMenu();
 				Sound.stopSoundWaves();
 				Sound.playSoundOver();
 			}
+			
 
 			else if (extraLives > 0) {// has an extra life, game continues
 				extraLives--;
 				health = startingHealth;
+				
 			}
 		}
-//		if(this.getHealth() == 90){
-//			//Add health is low sound
-//			Sound.playLowHealth();
-//		}
+//	
 	}
 
 	/**
@@ -172,8 +181,15 @@ public class Player extends GameObject {
 					hud.updateScoreColor(Color.red);
 							health -= damage;
 							hud.updateScoreColor(Color.red);
+						
 				}
 				hud.updateHealth(health);
+
+			}
+			if(health == 40){
+				Sound.playLowHealth();
+				hud.updateHealth(health);
+
 
 			}
 			if (tempObject.getId() == ID.EnemyBoss) {
@@ -182,10 +198,26 @@ public class Player extends GameObject {
 				if (this.y <= 138 && tempObject.isMoving) {
 					health -= 2;
 					hud.updateScoreColor(Color.red);
+					System.out.println("Get out");
 				}
 			}
 
 		}
+	}
+	public void setShooting(boolean shooting) {
+		this.isShooting = shooting;
+	}
+
+	public boolean getShooting() {
+		return isShooting;
+	}
+
+	public void setBulletX(double bulletX) {
+		this.bulletX = bulletX;
+	}
+
+	public void setBulletY(double bulletY) {
+		this.bulletY = bulletY;
 	}
 
 	@Override
@@ -218,15 +250,12 @@ public class Player extends GameObject {
 	public void activateTriggeredAbility(Ability ability, int uses) {
 		this.ability = ability;
 		abilityUses = uses;
-		hud.updateAbilityText(ability, uses);
 	}
 	
 	public void decrementAbilityUses() {
 		abilityUses--;
-		hud.updateAbilityText(ability, abilityUses);
 		if (abilityUses < 1) {
 			ability = Ability.None;
-			hud.updateAbilityText(ability, abilityUses);
 		}
 	}
 	

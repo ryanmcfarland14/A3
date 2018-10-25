@@ -102,7 +102,6 @@ public class HUD {
 				abilityName = "Level Skips:";
 				break;
 			default:
-				System.out.println("NOTHING TO SHOW");
 				break;
 		}
 		if (ability == Player.Ability.None) {

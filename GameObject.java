@@ -5,7 +5,7 @@ import java.awt.Rectangle;
 
 /**
  * Every object in the game extends this abstract class
- * 
+ * Power-ups
  * @author Brandon Loehle 5/30/16
  *
  */
@@ -21,8 +21,8 @@ public abstract class GameObject {
 	protected int health;
 
 	public GameObject(double x, double y, ID id) {
-		this.x = Game.scaleX(x);
-		this.y = Game.scaleY(y);
+		this.x = x;
+		this.y = y;
 		this.id = id;
 
 	}
@@ -81,10 +81,12 @@ public abstract class GameObject {
 	public int getHealth() {
 		return this.health;
 	}
-
-	public void paintComponent(Graphics g) {
-		// TODO Auto-generated method stub
-		
+	
+	public void setHealth(int health){
+		this.health = health;
 	}
 
 }
+
+
+

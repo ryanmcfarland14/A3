@@ -73,7 +73,7 @@ public class Sound {
 	public static void stopSoundMenu() {
 		clip2.stop();
 		clip2.close();
-		System.out.println("clip closed");
+		
 	}
 
 	//Survival Game mode theme
@@ -99,7 +99,7 @@ public class Sound {
 	public static void stopSoundSurvival() {
 		clip2.stop();
 		clip2.close();
-		System.out.println("clip closed");
+
 	}
 
 	// Game over sound
@@ -141,7 +141,7 @@ public class Sound {
 			FloatControl gainControl = (FloatControl) clip4.getControl(FloatControl.Type.MASTER_GAIN);
 			gainControl.setValue(5.0f);
 			clip4.start();
-			System.out.println("NEW LEVEL SOUND");
+		
 
 		}
 
@@ -160,7 +160,7 @@ public class Sound {
 			FloatControl gainControl = (FloatControl) clip5.getControl(FloatControl.Type.MASTER_GAIN);
 			gainControl.setValue(5.0f);
 			clip5.start();
-			System.out.println("Button Press");
+	
 
 		}
 
@@ -179,7 +179,7 @@ public class Sound {
 			FloatControl gainControl = (FloatControl) clip6.getControl(FloatControl.Type.MASTER_GAIN);
 			gainControl.setValue(5.0f);
 			clip6.start();
-			System.out.println("LowHealth");
+		
 
 		}
 
