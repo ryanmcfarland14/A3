@@ -1,0 +1,311 @@
+package mainGame;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Rectangle;
+import java.util.Random;
+import javax.swing.JOptionPane;
+
+import mainGame.Game.STATE;
+
+/**
+ * The main player in the game
+ * 
+ * @author Brandon Loehle 5/30/16
+ *
+ */
+
+public class Player extends GameObject {
+
+	Random r = new Random();
+	Handler handler;
+	private HUD hud;
+	private Game game;
+	private int health = 0;
+	public int playerSpeed = 10;
+	private boolean doubleHealth = false;
+	private boolean regen = false;
+	private int score = 0;
+	private int abilityUses = 0;
+	private int extraLives = 0;
+	private Ability ability = Ability.None;
+	private int damage;
+	private int playerWidth, playerHeight;
+	private boolean isShooting;
+	private double bulletX;
+	private double bulletY;
+	private int bulletSpeed;
+	
+	private final int reducedDamageValue = 1;
+	private final double speedBoostMod = 1000; //Originally 2
+	
+	private final int reducedPlayerSize = 24;
+	
+	
+	private final int startingHealth = 100;
+	private final int startingDamage = 4;//Originally 2
+	private final int startingPlayerWidth = 32;
+	private final int startingPlayerHeight = 32;
+	private final int startingPlayerSpeed = 10;
+	
+	public enum Ability {
+		None,
+		FreezeTime,
+		ClearScreen,
+		LevelSkip
+	}
+	
+	public Player(double x, double y, ID id, Handler handler, Game game) {
+		super(x, y, id);
+		this.handler = handler;
+		this.hud = hud;
+		this.game = game;
+		this.damage = 2;
+		playerWidth = 32;
+		playerHeight = 32;
+	}
+	
+	public int getHealth() {
+		return health;
+	}
+
+	public void setHealth(int health) {
+		this.health = health;
+	}
+	public void initialize() {
+		switch (game.gameState) {
+			case Game:
+				hud = game.getHud();
+				break;
+			case Survival:
+				hud = game.getSurvivalHud();
+				break;
+			default:
+				break;
+		}
+		health = startingHealth;
+		doubleHealth = false;
+		regen = false;
+		extraLives = 0;
+		ability = Ability.None;
+		abilityUses = 0;
+		damage = startingDamage;
+		playerWidth = startingPlayerWidth;
+		playerHeight = startingPlayerHeight;
+		playerSpeed = startingPlayerSpeed;
+		hud.updateHealth(health);
+		hud.updateLivesText(extraLives);
+	}
+
+	@Override
+	public void tick() {
+		this.x += velX;
+		this.y += velY;
+		x = Game.clamp(x, 0, Game.WIDTH - 38);
+		y = Game.clamp(y, Game.scaleY(90), Game.HEIGHT - 60);
+
+		// add the trail that follows it
+		handler.addObject(new Trail(x, y, ID.Trail, Color.white, playerWidth, playerHeight, 0.05, this.handler));
+		collision();
+		checkIfDead();
+
+		hud.tickScore();
+		hud.updateHealth(health);
+		hud.updateLivesText(extraLives);
+		
+	/*	if (isShooting == true) {
+			handler.addObject(new PlayerBullets(this.x, this.y, bulletX, bulletY, this.hud, ID.PlayerBullets,
+					this.handler));
+		}
+	
+	*/
+	}
+	public void checkIfDead() {
+		if (health <= 0) {// player is dead, game over!
+
+			if (extraLives == 0 && game.gameState == STATE.Survival) {
+				game.previousGameState = game.gameState;
+				game.gameState = STATE.GameOver;
+				Sound.stopSoundMenu();
+				Sound.stopSoundSurvival();
+				Sound.playSoundOver();
+			}
+			
+			if (extraLives == 0 && game.gameState == STATE.Game ) {
+				game.previousGameState = game.gameState;
+				game.gameState = STATE.GameOver;
+				Sound.stopSoundMenu();
+				Sound.stopSoundWaves();
+				Sound.playSoundOver();
+			}
+			
+
+			else if (extraLives > 0) {// has an extra life, game continues
+				extraLives--;
+				health = startingHealth;
+				
+			}
+		}
+//	
+	}
+
+	/**
+	 * Checks for collisions with all of the enemies, and handles it accordingly
+	 */
+	public void collision() {
+
+		hud.updateScoreColor(Color.white);
+		for (int i = 0; i < handler.object.size(); i++) {
+			GameObject tempObject = handler.object.get(i);
+
+			if (tempObject.getId() == ID.EnemyBasic 
+					|| tempObject.getId() == ID.EnemyFast
+					|| tempObject.getId() == ID.EnemySmart 
+					|| tempObject.getId() == ID.EnemyBossBullet
+					|| tempObject.getId() == ID.EnemySweep 
+					|| tempObject.getId() == ID.EnemyShooterBullet
+					|| tempObject.getId() == ID.EnemyBurst 
+					|| tempObject.getId() == ID.EnemyShooter
+					|| tempObject.getId() == ID.BossEye
+					|| tempObject.getId() == ID.EnemyRaindrop
+					|| tempObject.getId() == ID.EnemyShotgun
+					|| tempObject.getId() == ID.EnemyShotgunBullet
+					|| tempObject.getId() == ID.EnemySmarter
+					|| tempObject.getId() == ID.EnemyBossGhost
+					|| tempObject.getId() == ID.EnemyBossGhostTrail
+					|| tempObject.getId() == ID.EnemyCircle) {// tempObject is an enemy
+
+				// collision code
+				if (getBounds().intersects(tempObject.getBounds())) {// player hit an enemy
+					hud.updateScoreColor(Color.red);
+							health -= damage;
+							hud.updateScoreColor(Color.red);
+						
+				}
+				hud.updateHealth(health);
+
+			}
+			if(health == 40){
+				Sound.playLowHealth();
+				hud.updateHealth(health);
+
+
+			}
+			if (tempObject.getId() == ID.EnemyBoss) {
+				// Allows player time to get out of upper area where they will get hurt once the
+				// boss starts moving
+				if (this.y <= 138 && tempObject.isMoving) {
+					health -= 2;
+					hud.updateScoreColor(Color.red);
+					System.out.println("Get out");
+				}
+			}
+
+		}
+	}
+	public void setShooting(boolean shooting) {
+		this.isShooting = shooting;
+	}
+
+	public boolean getShooting() {
+		return isShooting;
+	}
+
+	public void setBulletX(double bulletX) {
+		this.bulletX = bulletX;
+	}
+
+	public void setBulletY(double bulletY) {
+		this.bulletY = bulletY;
+	}
+
+	@Override
+	public void render(Graphics g) {
+
+		g.setColor(Color.blue);
+		g.fillRect((int) x, (int) y, (int) Game.scaleX(playerWidth), (int) Game.scaleY(playerHeight));
+
+	}
+
+	@Override
+	public Rectangle getBounds() {
+		return new Rectangle((int) this.x, (int) this.y, (int) Game.scaleX(playerWidth), (int) Game.scaleY(playerHeight));
+	}
+	
+	public void activateDoubleHealth() {
+		doubleHealth = true;
+		health = 2 * startingHealth;
+		hud.activateDoubleHealth();
+	}
+	
+	public void activateRegen() {
+		regen = true;
+	}
+	
+	public void activateDamageResistance() {
+		damage = reducedDamageValue;
+	}
+	
+	public void activateTriggeredAbility(Ability ability, int uses) {
+		this.ability = ability;
+		abilityUses = uses;
+	}
+	
+	public void decrementAbilityUses() {
+		abilityUses--;
+		if (abilityUses < 1) {
+			ability = Ability.None;
+		}
+	}
+	
+	public void activateSpeedBoost() {
+		playerSpeed *= speedBoostMod;
+	}
+	
+	public void activateReducedSize() {
+		setPlayerSize(reducedPlayerSize);
+	}
+
+	public void setDamage(int damage) {
+		this.damage = damage;
+	}
+
+	public void setPlayerSize(int size) {
+		this.playerWidth = size;
+		this.playerHeight = size;
+	}
+	
+	public Ability getAbility() {
+		return ability;
+	}
+
+	public void setAbility(Ability ability) {
+		this.ability = ability;
+	}
+
+	public int getAbilityUses() {
+		return abilityUses;
+	}
+
+	public void setAbilityUses(int abilityUses) {
+		this.abilityUses = abilityUses;
+	}
+
+	public int getExtraLives() {
+		return extraLives;
+	}
+
+	public void setExtraLives(int extraLives) {
+		this.extraLives = extraLives;
+	}
+
+	public Game getGame() {
+		return game;
+	}	
+
+	public void setHUD(HUD newHud) {
+		hud = newHud;
+	}
+
+}
