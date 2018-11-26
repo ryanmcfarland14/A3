@@ -69,6 +69,14 @@ public class HUD {
 		}
 	}
 
+	public int getHealthBarSize() {
+		return healthBar.width;
+	}
+	
+	public HUDElement getHealthBar() {
+		return healthBar;
+	}
+	
 	public void updateScoreColor(Color color) {
 		this.scoreColor = color;
 	}
@@ -189,6 +197,11 @@ public class HUD {
 		}
 		
 		
+	}
+	
+	public void dead() {
+		healthBar.setWidth(0);
+		healthBar.setColor(new Color(0,0,0));
 	}
 	
 	protected class HUDRectangle extends HUDElement {

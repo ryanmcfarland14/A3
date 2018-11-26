@@ -51,6 +51,7 @@ public class Game extends Canvas implements Runnable {
 	public static int TEMP_COUNTER;
 	private boolean paused;
 	private boolean scoreSaved;
+	private boolean extreme;
 	/**
 	 * Used to switch between each of the screens shown to the user
 	 */
@@ -74,6 +75,7 @@ public class Game extends Canvas implements Runnable {
 		}
 		
 		 scoreSaved = false;
+		 extreme = false;
 		 
 		handler = new Handler();
 		hud = new HUD();
@@ -159,7 +161,35 @@ public class Game extends Canvas implements Runnable {
 		}
 		stop();
 	}
+	
+	//LEADERBOARD LOGIC
+	public boolean getScoreSaved() {
+		return scoreSaved;
+	}
+	
+	public Score getScore() {
+		return score;
+	}
+	
+	public void setScoreSaved(boolean val) {
+		scoreSaved = val;
+	}
+	
+	public void enableExtreme() {
+		extreme = true;
+	}
+	
+	public boolean isExtreme() {
+		return extreme;
+	}
 
+	public void resetUpgradePaths() {
+		upgradeScreen.resetPaths();
+	}
+	
+	public void resetUpgradeAdds() {
+		upgradeScreen.addPaths();
+	}
 	/**
 	 * Constantly ticking (60 times per second, used for updating smoothly). Used
 	 * for updating the instance variables (DATA) of each entity (location, health,
@@ -234,12 +264,13 @@ public class Game extends Canvas implements Runnable {
 			upgradeScreen.render(g);
 		} else if (gameState == STATE.GameOver) {// game is over, draw the game over screen
 			gameOver.render(g);
+			System.out.println("HEALTH: "+player.getHealth());
 			
-			if(!scoreSaved){
-				String name = JOptionPane.showInputDialog("Enter your name for the leaderboard:");
-				score.addScore(hud.getScore(), name);
-				scoreSaved = true;
-			}
+//			if(!scoreSaved){
+//				String name = JOptionPane.showInputDialog("Enter your name for the leaderboard:");
+//				score.addScore(hud.getScore(), name);
+//				scoreSaved = true;
+//			}
 		} else if(gameState == STATE.PauseMenu) {
 			switch (previousGameState) {
 				case Game:
@@ -272,6 +303,12 @@ public class Game extends Canvas implements Runnable {
 		bs.show();
 	}
 
+	public void set1to10Level(int x) {
+		spawner.setLevelTo(x);
+		Spawn1to10.LEVEL_SET = 1;
+		tick();
+	}
+	
 	public boolean isPaused() {
 		return paused;
 	}

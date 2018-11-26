@@ -27,6 +27,7 @@ public class Player extends GameObject {
 	public int playerSpeed = 10;
 	private boolean doubleHealth = false;
 	private boolean regen = false;
+	private boolean degen = false;
 	private int score = 0;
 	private int abilityUses = 3;
 	private int extraLives = 0;
@@ -77,6 +78,7 @@ public class Player extends GameObject {
 		health = startingHealth;
 		doubleHealth = false;
 		regen = false;
+		degen = false;
 		regenTick = 0;
 		extraLives = 0;
 		ability = Ability.None;
@@ -116,18 +118,31 @@ public class Player extends GameObject {
 				regenTick++;
 			}
 		}
+		
+		if(degen) {
+			if(regenTick>=25) {
+				regenTick = 0;
+				if(health>1) {
+					health--;
+				}
+			} else {
+				regenTick++;
+			}
+		}
 	
 	}
 
 	public void checkIfDead() {
-		if (health <= 0) {// player is dead, game over!
+		if (hud.getHealthBarSize() <= -10) {// player is dead, game over!
 
 			if (extraLives == 0) {
-				game.previousGameState = game.gameState;
-				game.gameState = STATE.GameOver;
+				
 				Sound.stopSoundMenu();
 				Sound.stopSoundWaves();
 				Sound.playSoundOver();
+				
+				game.previousGameState = game.gameState;
+				game.gameState = STATE.GameOver;
 			}
 
 			else if (extraLives > 0) {// has an extra life, game continues
@@ -211,6 +226,10 @@ public class Player extends GameObject {
 		regen = true;
 	}
 	
+	public void activateDegen() {
+		degen = true;
+	}
+	
 	public void activateDamageResistance() {
 		damage = reducedDamageValue;
 	}
@@ -234,12 +253,24 @@ public class Player extends GameObject {
 		playerSpeed *= speedBoostMod;
 	}
 	
+	public void activateTurtle() {
+		playerSpeed = playerSpeed/2;
+	}
+	
 	public void activateReducedSize() {
 		setPlayerSize(reducedPlayerSize);
 	}
 
 	public void setDamage(int damage) {
 		this.damage = damage;
+	}
+	
+	public int getHealth() {
+		return health;
+	}
+	
+	public void setHealth(int x) {
+		this.health = x;
 	}
 
 	public void setPlayerSize(int size) {
@@ -278,5 +309,6 @@ public class Player extends GameObject {
 	public void setHUD(HUD newHud) {
 		hud = newHud;
 	}
+
 
 }

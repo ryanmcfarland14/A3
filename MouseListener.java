@@ -103,12 +103,7 @@ public class MouseListener extends MouseAdapter {
 		else if (game.gameState == STATE.Menu) {
 			// Waves Button
 			if (mouseOver(mx, my, 805, 545, 300, 55)) {
-				handler.object.clear();
-				game.gameState = STATE.Game;
-				player.initialize();
-				handler.addObject(player);
-				Sound.stopSoundMenu();
-				Sound.playSoundWaves();
+				new DifficultyWindow(this);
 			}
 
 			// Survival Button
@@ -167,6 +162,29 @@ public class MouseListener extends MouseAdapter {
 				game.gameState = STATE.Menu;
 				return;
 			}
+		}
+	}
+	
+	//New Wave Start (1=easy, 4=extreme)
+	public void wavesNewStart(int difficulty) {
+		System.out.println("Difficulty Selected: " + difficulty);
+		handler.object.clear();
+		game.gameState = STATE.Game;
+		player.initialize();
+		handler.addObject(player);
+		Sound.stopSoundMenu();
+		Sound.playSoundWaves();
+		
+		//Apply difficulty (Normal is default)
+		if(difficulty==1) { //Easy
+			player.setExtraLives(2);
+		} else if(difficulty==3) { //Hard
+			spawner.enableHardMode();
+			spawner2.enableHardMode();
+		} else if(difficulty==4) { //EXTREME
+			spawner.enableHardMode();
+			spawner2.enableHardMode();
+			game.enableExtreme();
 		}
 	}
 

@@ -32,6 +32,8 @@ public class Spawn1to10 {
 	private int levelNumber;
 	private int tempCounter;
 	private LevelText levelString;
+	
+	private boolean hardmode = false;
 
 	public Spawn1to10(Handler handler, HUD hud, Game game) {
 		this.handler = handler;
@@ -50,6 +52,7 @@ public class Spawn1to10 {
 		levelString = new LevelText(Game.WIDTH / 2 - Game.scaleX(675), Game.HEIGHT / 2 - Game.scaleY(150),
 				"Level " + levelNumber, ID.Levels1to10Text);
 		hud.setLevel(levelNumber);
+		hardmode = false;
 
 	}
 
@@ -60,6 +63,10 @@ public class Spawn1to10 {
 		for (int i = 0; i <= 9; i++) {
 			levels.add(i);
 		}
+	}
+	
+	public void enableHardMode() {
+		hardmode = true;
 	}
 
 	/**
@@ -416,6 +423,7 @@ public class Spawn1to10 {
 
 		}
 		hud.updateLevelText(levelNumber);
+		if(hardmode) spawnTimer--;
 	}
 
 	public void playSound(){
@@ -436,6 +444,8 @@ public class Spawn1to10 {
 			onScreenTimer = 100;
 		} else if (levelsRemaining == 0) {
 			LEVEL_SET++;
+			game.resetUpgradePaths();
+			game.resetUpgradeAdds();
 			game.gameState = STATE.Upgrade;
 		}
 	}
@@ -445,6 +455,13 @@ public class Spawn1to10 {
 		for (int i = 0; i <= 9; i++) {
 			levels.remove(i);
 		}
+	}
+	
+	public void setLevelTo(int x) {
+		levelNumber = x;
+		game.gameState = STATE.Game;
+		tempCounter = 0;
+		spawnTimer = 0;
 	}
 	
 	public void restart() {
