@@ -32,6 +32,8 @@ public class Spawn1to10 {
 	private int levelNumber;
 	private int tempCounter;
 	private LevelText levelString;
+	
+	private boolean hardmode = false;
 
 	public Spawn1to10(Handler handler, HUD hud, Game game) {
 		this.handler = handler;
@@ -50,15 +52,8 @@ public class Spawn1to10 {
 		levelString = new LevelText(Game.WIDTH / 2 - Game.scaleX(675), Game.HEIGHT / 2 - Game.scaleY(150),
 				"Level " + levelNumber, ID.Levels1to10Text);
 		hud.setLevel(levelNumber);
+		hardmode = false;
 
-	}
-
-	public int getSpawnTimer() {
-		return spawnTimer;
-	}
-
-	public void setSpawnTimer(int spawnTimer) {
-		this.spawnTimer = spawnTimer;
 	}
 
 	/**
@@ -68,6 +63,10 @@ public class Spawn1to10 {
 		for (int i = 0; i <= 9; i++) {
 			levels.add(i);
 		}
+	}
+	
+	public void enableHardMode() {
+		hardmode = true;
 	}
 
 	/**
@@ -85,7 +84,6 @@ public class Spawn1to10 {
 				levelTimer = 2000;// 2000 / 60 method calls a second = 33.33
 									// seconds long
 				tempCounter++;// ensures the method is only called once
-				
 			}
 			if (spawnTimer == 0) {// time to spawn another enemy
 				handler.addObject(
@@ -117,7 +115,6 @@ public class Spawn1to10 {
 		} else if (levelNumber == 2) {
 			spawnTimer--;
 			levelTimer--;
-			
 			if (tempCounter < 1) {
 				levelTimer = 2000;
 				tempCounter++;
@@ -161,7 +158,6 @@ public class Spawn1to10 {
 		} else if (levelNumber == 3) {
 			spawnTimer--;
 			levelTimer--;
-	
 			if (tempCounter < 1) {
 				levelTimer = 1500;
 				tempCounter++;
@@ -195,7 +191,6 @@ public class Spawn1to10 {
 			}
 		} else if (levelNumber == 4) {
 			levelTimer--;
-	
 			if (tempCounter < 1) {
 				handler.addObject(new EnemyShotgun(Game.scaleX(40), Game.scaleY(100), -20, ID.EnemyShotgun,
 						this.handler));
@@ -204,12 +199,7 @@ public class Spawn1to10 {
 				levelTimer = 1300;
 				tempCounter++;
 			}
-		/*	if (spawnTimer == 0) {// time to spawn another enemy
-				handler.addObject(new EnemyShotgun(Game.scaleX(40), Game.scaleY(100), -20, ID.EnemyShotgun,
-						this.handler));// add
-				spawnTimer = 100;// reset the spawn timer
-			}
-*/
+
 			if (levelTimer == 0) {
 				handler.clearEnemies();
 				hud.setLevel(hud.getLevel() + 1);
@@ -234,7 +224,6 @@ public class Spawn1to10 {
 			}
 		} else if (levelNumber == 5) {
 			levelTimer--;
-		
 			levelString.setString("Ghost Watch Out!");
 			if (tempCounter < 1) {
 				handler.addObject(new EnemyBossGhost(r.nextInt(Game.WIDTH), r.nextInt(Game.HEIGHT), -5, ID.EnemyBossGhost, handler));
@@ -269,7 +258,6 @@ public class Spawn1to10 {
 		} else if (levelNumber == 6) {
 			spawnTimer--;
 			levelTimer--;
-		
 			if (tempCounter < 1) {
 				levelTimer = 1200;
 				tempCounter++;
@@ -306,7 +294,6 @@ public class Spawn1to10 {
 		} else if (levelNumber == 7) {
 			spawnTimer--;
 			levelTimer--;
-		
 			if (tempCounter < 1) {
 				levelTimer = 1000;
 				tempCounter++;
@@ -340,9 +327,8 @@ public class Spawn1to10 {
 			}
 		} else if (levelNumber == 8) {
 			levelTimer--;
-		
 			if (tempCounter < 1) {
-				handler.addObject(new EnemyShooter(500, 100, 200, 200,
+				handler.addObject(new EnemyShooter(r.nextInt(Game.WIDTH) - 35, r.nextInt(Game.HEIGHT) - 75, 200, 200,
 						-15, ID.EnemyShooter, this.handler));
 				levelTimer = 2500;
 				tempCounter++;
@@ -373,7 +359,6 @@ public class Spawn1to10 {
 		} else if (levelNumber == 9) {
 			spawnTimer--;
 			levelTimer--;
-			
 			if (tempCounter < 1) {
 				levelTimer = 1400;
 				tempCounter++;
@@ -408,7 +393,6 @@ public class Spawn1to10 {
 		}
 
 		else if (levelNumber == 10) {// arbitrary number for the boss
-			
 			if (onScreenTimer != 0) {
 				if (temp < 1) {
 					Sound.playSoundNewLevel();
@@ -439,6 +423,7 @@ public class Spawn1to10 {
 
 		}
 		hud.updateLevelText(levelNumber);
+		if(hardmode) spawnTimer--;
 	}
 
 	public void playSound(){
@@ -459,6 +444,8 @@ public class Spawn1to10 {
 			onScreenTimer = 100;
 		} else if (levelsRemaining == 0) {
 			LEVEL_SET++;
+			game.resetUpgradePaths();
+			game.resetUpgradeAdds();
 			game.gameState = STATE.Upgrade;
 		}
 	}
@@ -470,22 +457,19 @@ public class Spawn1to10 {
 		}
 	}
 	
+	public void setLevelTo(int x) {
+		levelNumber = x;
+		game.gameState = STATE.Game;
+		tempCounter = 0;
+		spawnTimer = 0;
+	}
+	
 	public void restart() {
-		if(game.gameState == STATE.Menu ||game.previousGameState==STATE.Game){
+		if(game.gameState == STATE.Menu){
 			levelNumber = 1;
 			tempCounter = 0;
 			levelTimer = 0;
 			levelsRemaining = 10;
-			
 		}
-		
-	}
-
-	public int getLevelNumber() {
-		return levelNumber;
-	}
-
-	public void setLevelNumber(int levelNumber) {
-		this.levelNumber = levelNumber;
 	}
 }

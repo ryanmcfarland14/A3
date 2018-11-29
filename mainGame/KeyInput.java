@@ -4,6 +4,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 import mainGame.Game.STATE;
+import mainGame.Player.Ability;
 
 /**
  * Handles key input from the user
@@ -22,10 +23,8 @@ public class KeyInput extends KeyAdapter {
 	private HUD hud;
 	private Player player;
 	private Spawn1to10 spawner;
-	private Spawn10to20 spawner2;
 	private Upgrades upgrades;
 	private String ability;;
-	private int health;
 
 	// uses current handler created in Game as parameter
 	public KeyInput(Handler handler, Game game, HUD hud, Player player, Spawn1to10 spawner, Upgrades upgrades) {
@@ -49,11 +48,11 @@ public class KeyInput extends KeyAdapter {
 		this.speed = player.playerSpeed;
 		
 		//Go back to Menu when hit backspace on leaderboard
-		if(game.gameState == STATE.Leaderboard && key == KeyEvent.VK_BACK_SPACE){
+		if(game.gameState == STATE.Leaderboard || game.gameState == STATE.Customization && key == KeyEvent.VK_BACK_SPACE){
 			game.gameState = STATE.Menu;
 		}
 		
-		if(game.gameState == STATE.GameOver || game.isPaused()){
+		if(game.gameState == STATE.GameOver){
 			if(key == KeyEvent.VK_H){
 				game.gameState = STATE.Menu;
 				handler.object.clear();
@@ -61,20 +60,9 @@ public class KeyInput extends KeyAdapter {
 				hud.setScore(0);
 				spawner.restart();
 				spawner.addLevels();
-				spawner.tick();
-				spawner2.tick();
-			
-			}
-			
-	
-			/* if spawner.getlevelnumber <=10{
-				spawner.tick}
-				else if spawner2.getlevelnumber >10{
-				spawner2.tick
 				
-				*/
 			}
-		
+		}
 		
 		// finds what key strokes associate with Player
 		for (int i = 0; i < handler.object.size(); i++) {
@@ -83,14 +71,7 @@ public class KeyInput extends KeyAdapter {
 			// using only if's allows multiple keys to be triggered at once
 			if (tempObject.getId() == ID.Player) {// find the player object, as
 													// he is the only one the
-				if (key == KeyEvent.VK_Y) {
-					player.setHealth(0);
-				}
-				
-				if (key == KeyEvent.VK_O) {
-					player.setHealth(100);
-				}
-				// user can control
+													// user can control
 				// key events for player 1
 				if (key == KeyEvent.VK_UP) {
 					tempObject.setVelY(-(this.speed));
@@ -114,48 +95,21 @@ public class KeyInput extends KeyAdapter {
 					tempObject.setVelX(this.speed);
 					keyDown[3] = true;
 				}
-				
-
-				// if (key == KeyEvent.VK_P){
-				// isPaused = true;
-				// game.gameState = STATE.pause;
-				// }
-//WASD
-				if (key == KeyEvent.VK_A) {
-					tempObject.setVelX(-(this.speed));
-					keyDown[1] = true;
-				//	System.out.println("In A");
-				
-				}
-				if (key == KeyEvent.VK_S) {
-					tempObject.setVelY(this.speed);
-					keyDown[2] = true;
-				}
-				if (key == KeyEvent.VK_D) {
-					tempObject.setVelX(this.speed);
-					keyDown[3] = true;
-				}
-				
-				if (key == KeyEvent.VK_W) {
-					tempObject.setVelY(-(this.speed));
-					keyDown[0] = true;
-				}
 
 				if ((key == KeyEvent.VK_SPACE) && game.gameState == Game.STATE.Game) {
 					upgrades.levelSkipAbility();
 				}
 
 				if (key == KeyEvent.VK_ENTER) {
-					ability = upgrades.getAbility();
-					if (ability.equals("clearScreen")) {
+					Ability curability = player.getAbility();
+					if (curability.equals(Ability.ClearScreen)) {
 						upgrades.clearScreenAbility();
-					} else if (ability.equals("levelSkip")) {
+					} else if (curability.equals(Ability.LevelSkip)) {
 						upgrades.levelSkipAbility();
-					} else if (ability.equals("freezeTime")) {
+					} else if (curability.equals(Ability.FreezeTime)) {
 						upgrades.freezeTimeAbility();
 					}
 				}
-				
 				
 				
 				if(key == KeyEvent.VK_P) {
@@ -188,16 +142,6 @@ public class KeyInput extends KeyAdapter {
 				if (key == KeyEvent.VK_DOWN)
 					keyDown[2] = false;// tempObject.setVelY(0);
 				if (key == KeyEvent.VK_RIGHT) {
-					keyDown[3] = false;// tempObject.setVelX(0);
-					keyDown[4] = false;
-				}
-				if (key == KeyEvent.VK_W)
-					keyDown[0] = false;// tempObject.setVelY(0);
-				if (key == KeyEvent.VK_A)
-					keyDown[1] = false;// tempObject.setVelX(0);
-				if (key == KeyEvent.VK_S)
-					keyDown[2] = false;// tempObject.setVelY(0);
-				if (key == KeyEvent.VK_D) {
 					keyDown[3] = false;// tempObject.setVelX(0);
 					keyDown[4] = false;
 				}

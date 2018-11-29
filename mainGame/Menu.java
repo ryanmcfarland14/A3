@@ -72,7 +72,6 @@ public class Menu {
 
 	public void tick() {
 		timer--;
-		game.unPause();
 		if (timer <= 0) {
 			handler.object.clear();
 			colorIndex = r.nextInt(6);
@@ -107,6 +106,9 @@ public class Menu {
 				"", new int[] {400, 900});
 			//Leaderboard
 			drawMenuItem(g, font, Color.white, new int[] {805, 675, 300, 55}, 
+				"", new int[] {1075, 900});
+			//Customization
+			drawMenuItem(g, font, Color.yellow, new int[] {805, 480, 300, 55},
 				"", new int[] {1075, 900});
 		}
 	}

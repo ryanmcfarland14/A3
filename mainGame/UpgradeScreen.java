@@ -29,9 +29,19 @@ public class UpgradeScreen {
 	private Handler handler;
 	private HUD hud;
 	private String text;
-	private String[] paths = { "images/clearscreenability.png", "images/decreaseplayersize.png", "images/extralife.png",
+	private String[] paths = new String[9];
+	private String[] paths1 = { "images/clearscreenability.png", "images/decreaseplayersize.png", "images/extralife.png",
 			"images/healthincrease.png", "images/healthregeneration.png", "images/improveddamageresistance.png",
 			"images/levelskipability.png", "images/freezetimeability.png", "images/speedboost.png" };
+	private String[] paths2 = { "images/Degeneration.png", 
+			"images/DoubleSize.png", 
+			"images/HalfHealth.png", 
+			"images/OneShot.png", 
+			"images/StartOver.png",
+			"images/Turtle.png",
+			"images/Degeneration.png", 
+			"images/DoubleSize.png", 
+			"images/HalfHealth.png"};
 	private ArrayList<String> imagePaths = new ArrayList<String>();
 	private Random r = new Random();
 	private int index1, index2, index3, tempCounter;
@@ -52,7 +62,11 @@ public class UpgradeScreen {
 
 	public void render(Graphics g) {
 		Font font = new Font("Amoebic", 1, (int) Game.scaleY(175));
-		text = "Select an Upgrade!";
+		if(game.isExtreme()) {
+			text = "Select a Downgrade...";
+		} else {
+			text = "Select an Upgrade!";
+		}
 		g.setFont(font);
 		g.setColor(Color.WHITE);
 		g.drawString(text, (int) Game.scaleX(Game.WIDTH / 2 - getTextWidth(font, text) / 2), (int) Game.scaleY(200));
@@ -68,24 +82,44 @@ public class UpgradeScreen {
 	 * Reset the paths to each picture
 	 */
 	public void resetPaths() {
-		paths[0] = "images/clearscreenability.png";
-		paths[1] = "images/decreaseplayersize.png";
-		paths[2] = "images/extralife.png";
-		paths[3] = "images/healthincrease.png";
-		paths[4] = "images/healthregeneration.png";
-		paths[5] = "images/improveddamageresistance.png";
-		paths[6] = "images/levelskipability.png";
-		paths[7] = "images/freezetimeability.png";
-		paths[8] = "images/speedboost.png";
+		imagePaths = null;
+		if(game.isExtreme()) {
+			paths[0] = "images/Degeneration.png";
+			paths[1] = "images/DoubleSize.png";
+			paths[2] = "images/HalfHealth.png";
+			paths[3] = "images/OneShot.png";
+			paths[4] = "images/StartOver.png";
+			paths[5] = "images/Turtle.png";
+			//Make up
+			paths[6] = "images/Degeneration.png";
+			paths[7] = "images/DoubleSize.png";
+			paths[8] = "images/HalfHealth.png";
+		} else {
+			paths[0] = "images/clearscreenability.png";
+			paths[1] = "images/decreaseplayersize.png";
+			paths[2] = "images/extralife.png";
+			paths[3] = "images/healthincrease.png";
+			paths[4] = "images/healthregeneration.png";
+			paths[5] = "images/improveddamageresistance.png";
+			paths[6] = "images/levelskipability.png";
+			paths[7] = "images/freezetimeability.png";
+			paths[8] = "images/speedboost.png";
+		}
 
 	}
 
 	public void addPaths() {
+		imagePaths = new ArrayList<String>();
 		for (int i = 0; i < 9; i++) {
-			imagePaths.add(paths[i]);
+			if(game.isExtreme()) {
+				imagePaths.add(paths2[i]);
+			} else {
+				imagePaths.add(paths1[i]);
+			}
 		}
 	}
 
+	//Random Get
 	public int getIndex(int maxIndex) {
 		int index = r.nextInt(maxIndex);
 		return index;

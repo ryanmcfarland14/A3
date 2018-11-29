@@ -26,10 +26,6 @@ public class MouseListener extends MouseAdapter {
 	private Upgrades upgrades;
 	private Player player;
 	private String upgradeText;
-	private double bulletX;
-	private double bulletY;
-	private int bulletSpeed;
-
 
 	public MouseListener(Game game, Handler handler, HUD hud, Spawn1to10 spawner, Spawn10to20 spawner2,
 			UpgradeScreen upgradeScreen, Player player, Upgrades upgrades) {
@@ -41,8 +37,6 @@ public class MouseListener extends MouseAdapter {
 		this.upgradeScreen = upgradeScreen;
 		this.player = player;
 		this.upgrades = upgrades;
-		
-		
 	}
 
 	public void mousePressed(MouseEvent e) {
@@ -57,27 +51,12 @@ public class MouseListener extends MouseAdapter {
 				player.initialize();
 				hud.setLevel(1);
 				spawner.restart();
-				spawner2.restart(); //added
+				spawner2.restart();
 	  			spawner2.addLevels();
 	  			handler.object.clear();
 	  			Spawn1to10.LEVEL_SET = 1;
 	  			game.gameState = STATE.Game;
 	  			 handler.addObject(player);
-	  			player.setShooting(true);
-	  			//setleveltimer to 0
-	  			
-
-				// pythagorean theorem to direct where the bullets go
-				double diffX = player.getX() - mx - 16;
-				double diffY = player.getY() - my - 16;
-				double distance = Math.sqrt(
-						((player.getX() - mx) * (player.getX() - mx)) + ((player.getY() - my) * (player.getY() - my)));
-				bulletX = ((this.bulletSpeed / distance) * diffX);
-				bulletY = ((this.bulletSpeed / distance) * diffY);
-				
-				player.setBulletX(bulletX);
-				player.setBulletY(bulletY);
-
 			} else if (game.previousGameState == STATE.Survival) {
 				handler.object.clear();
 				player.initialize();
@@ -124,12 +103,8 @@ public class MouseListener extends MouseAdapter {
 		else if (game.gameState == STATE.Menu) {
 			// Waves Button
 			if (mouseOver(mx, my, 805, 545, 300, 55)) {
-				handler.object.clear();
-				game.gameState = STATE.Game;
-				player.initialize();
-				handler.addObject(player);
-				Sound.stopSoundMenu();
-				Sound.playSoundWaves();
+				System.out.println("CUSTOMIZATION: "+player.getImgNum());
+				new DifficultyWindow(this);
 			}
 
 			// Survival Button
@@ -145,6 +120,12 @@ public class MouseListener extends MouseAdapter {
 				Sound.stopSoundMenu();
 				Sound.playSoundSurvival();
 			}
+			
+			//Customization
+			if(mouseOver(mx, my, 805, 480, 300, 55)) {
+				//handler.addObject(player);
+				game.gameState = STATE.Customization;
+			}
 
 			// Help Button
 			else if (mouseOver(mx, my, 805, 740, 300, 55)) {
@@ -156,7 +137,7 @@ public class MouseListener extends MouseAdapter {
 								+ " as the small white box in the center of the screen, with the purpose to try to "
 								+ " \n"
 								+ "stay alive as long as possible while dodging enemies. To start avoiding enemies,"
-								+ " \n" + " you simply use the keys, WASD or arrow keys to navigate the page.",
+								+ " \n" + " you simply use the keys, â€œW-A-S-Dâ€� to navigate the page.",
 						"Help Menu", JOptionPane.INFORMATION_MESSAGE);
 			}
 
@@ -188,6 +169,44 @@ public class MouseListener extends MouseAdapter {
 				game.gameState = STATE.Menu;
 				return;
 			}
+		}
+		
+		// Customization Options
+		else if (game.gameState == STATE.Customization) {
+			if(mouseOver(mx,my, 300, 350, 300, 300)) {
+				player.setImgNum(1);
+				game.gameState = STATE.Menu;
+			} else if(mouseOver(mx,my, 850, 350, 300, 300)) {
+				player.setImgNum(2);
+				game.gameState = STATE.Menu;
+			} else if(mouseOver(mx,my, 1400, 350, 300, 300)) {
+				player.setImgNum(3);
+				game.gameState = STATE.Menu;
+			}
+			player.updateImg();
+		}
+	}
+	
+	//New Wave Start (1=easy, 4=extreme)
+	public void wavesNewStart(int difficulty) {
+		System.out.println("Difficulty Selected: " + difficulty);
+		handler.object.clear();
+		game.gameState = STATE.Game;
+		player.initialize();
+		handler.addObject(player);
+		Sound.stopSoundMenu();
+		Sound.playSoundWaves();
+		
+		//Apply difficulty (Normal is default)
+		if(difficulty==1) { //Easy
+			player.setExtraLives(2);
+		} else if(difficulty==3) { //Hard
+			spawner.enableHardMode();
+			spawner2.enableHardMode();
+		} else if(difficulty==4) { //EXTREME
+			spawner.enableHardMode();
+			spawner2.enableHardMode();
+			game.enableExtreme();
 		}
 	}
 
@@ -221,8 +240,8 @@ public class MouseListener extends MouseAdapter {
 		//my = (int) (my * (Game.HEIGHT / 1080f));
 		y = (int) (y * (Game.HEIGHT / 1080f));
 		height = (int) (height * (Game.HEIGHT / 1080f));
-		//System.out.println("" + mx + " " + x + " " + 
-			//	width + " " + my + " " + y + " " + height);
+		System.out.println("" + mx + " " + x + " " + 
+				width + " " + my + " " + y + " " + height);
 		if (mx > x && mx < x + width) {
 			if (my > y && my < y + height) {
 				return true;

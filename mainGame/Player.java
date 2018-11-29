@@ -3,7 +3,10 @@ package mainGame;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
+import java.net.URL;
 import java.util.Random;
 import javax.swing.JOptionPane;
 
@@ -21,30 +24,31 @@ public class Player extends GameObject {
 	Random r = new Random();
 	Handler handler;
 	private HUD hud;
+	private int regenTick = 0;
 	private Game game;
 	private int health = 0;
 	public int playerSpeed = 10;
 	private boolean doubleHealth = false;
 	private boolean regen = false;
+	private boolean degen = false;
 	private int score = 0;
-	private int abilityUses = 0;
+	private int abilityUses = 3;
 	private int extraLives = 0;
 	private Ability ability = Ability.None;
 	private int damage;
 	private int playerWidth, playerHeight;
-	private boolean isShooting;
-	private double bulletX;
-	private double bulletY;
-	private int bulletSpeed;
+	private int imgNum = 0;
+	private Image img = null;
+	private Color playerColor = Color.WHITE;
 	
 	private final int reducedDamageValue = 1;
-	private final double speedBoostMod = 1000; //Originally 2
+	private final double speedBoostMod = 2;
 	
 	private final int reducedPlayerSize = 24;
 	
 	
 	private final int startingHealth = 100;
-	private final int startingDamage = 4;//Originally 2
+	private final int startingDamage = 2;
 	private final int startingPlayerWidth = 32;
 	private final int startingPlayerHeight = 32;
 	private final int startingPlayerSpeed = 10;
@@ -64,15 +68,49 @@ public class Player extends GameObject {
 		this.damage = 2;
 		playerWidth = 32;
 		playerHeight = 32;
+		imgNum = 0;
 	}
 	
-	public int getHealth() {
-		return health;
+	//Customization Input
+	public void updateImg() {
+		if(imgNum!=0) {
+			String newURL;
+			if(imgNum==1) {
+				newURL = "images/pika.png";
+				playerColor = Color.YELLOW;
+			} else if(imgNum==2) {
+				newURL = "images/bulb.png";	
+				playerColor = Color.CYAN;
+			} else if(imgNum==3) {
+				newURL = "images/char.png";
+				playerColor = Color.ORANGE;
+			} else {
+				return; //Add more customization options here
+			}
+			img = getImage(newURL);
+		}
 	}
+	
+	public int getImgNum() {
+		return imgNum;
+	}
+	
+	public void setImgNum(int x) {
+		imgNum = x;
+	}
+	
+	public Image getImage(String path) {
+		Image image = null;
+		try {
+			URL imageURL = Game.class.getResource(path);
+			image = Toolkit.getDefaultToolkit().getImage(imageURL);
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
 
-	public void setHealth(int health) {
-		this.health = health;
+		return image;
 	}
+	
 	public void initialize() {
 		switch (game.gameState) {
 			case Game:
@@ -87,9 +125,11 @@ public class Player extends GameObject {
 		health = startingHealth;
 		doubleHealth = false;
 		regen = false;
+		degen = false;
+		regenTick = 0;
 		extraLives = 0;
 		ability = Ability.None;
-		abilityUses = 0;
+		abilityUses = 3;
 		damage = startingDamage;
 		playerWidth = startingPlayerWidth;
 		playerHeight = startingPlayerHeight;
@@ -106,7 +146,7 @@ public class Player extends GameObject {
 		y = Game.clamp(y, Game.scaleY(90), Game.HEIGHT - 60);
 
 		// add the trail that follows it
-		handler.addObject(new Trail(x, y, ID.Trail, Color.white, playerWidth, playerHeight, 0.05, this.handler));
+		handler.addObject(new Trail(x, y, ID.Trail, playerColor, playerWidth, playerHeight, 0.05, this.handler));
 		collision();
 		checkIfDead();
 
@@ -114,40 +154,52 @@ public class Player extends GameObject {
 		hud.updateHealth(health);
 		hud.updateLivesText(extraLives);
 		
-	/*	if (isShooting == true) {
-			handler.addObject(new PlayerBullets(this.x, this.y, bulletX, bulletY, this.hud, ID.PlayerBullets,
-					this.handler));
+		if(regen) {
+			if(regenTick>=25) {
+				regenTick = 0;
+				if(health<=100) {
+					health++;
+				}
+			} else {
+				regenTick++;
+			}
+		}
+		
+		if(degen) {
+			if(regenTick>=25) {
+				regenTick = 0;
+				if(health>1) {
+					health--;
+				}
+			} else {
+				regenTick++;
+			}
 		}
 	
-	*/
 	}
-	public void checkIfDead() {
-		if (health <= 0) {// player is dead, game over!
 
-			if (extraLives == 0 && game.gameState == STATE.Survival) {
-				game.previousGameState = game.gameState;
-				game.gameState = STATE.GameOver;
-				Sound.stopSoundMenu();
-				Sound.stopSoundSurvival();
-				Sound.playSoundOver();
-			}
-			
-			if (extraLives == 0 && game.gameState == STATE.Game ) {
-				game.previousGameState = game.gameState;
-				game.gameState = STATE.GameOver;
+	public void checkIfDead() {
+		if (hud.getHealthBarSize() <= -10) {// player is dead, game over!
+
+			if (extraLives == 0) {
+				
 				Sound.stopSoundMenu();
 				Sound.stopSoundWaves();
 				Sound.playSoundOver();
+				
+				game.previousGameState = game.gameState;
+				game.gameState = STATE.GameOver;
 			}
-			
 
 			else if (extraLives > 0) {// has an extra life, game continues
 				extraLives--;
 				health = startingHealth;
-				
 			}
 		}
-//	
+//		if(this.getHealth() == 90){
+//			//Add health is low sound
+//			Sound.playLowHealth();
+//		}
 	}
 
 	/**
@@ -181,15 +233,8 @@ public class Player extends GameObject {
 					hud.updateScoreColor(Color.red);
 							health -= damage;
 							hud.updateScoreColor(Color.red);
-						
 				}
 				hud.updateHealth(health);
-
-			}
-			if(health == 40){
-				Sound.playLowHealth();
-				hud.updateHealth(health);
-
 
 			}
 			if (tempObject.getId() == ID.EnemyBoss) {
@@ -198,33 +243,22 @@ public class Player extends GameObject {
 				if (this.y <= 138 && tempObject.isMoving) {
 					health -= 2;
 					hud.updateScoreColor(Color.red);
-					System.out.println("Get out");
 				}
 			}
 
 		}
 	}
-	public void setShooting(boolean shooting) {
-		this.isShooting = shooting;
-	}
-
-	public boolean getShooting() {
-		return isShooting;
-	}
-
-	public void setBulletX(double bulletX) {
-		this.bulletX = bulletX;
-	}
-
-	public void setBulletY(double bulletY) {
-		this.bulletY = bulletY;
-	}
 
 	@Override
 	public void render(Graphics g) {
 
-		g.setColor(Color.blue);
-		g.fillRect((int) x, (int) y, (int) Game.scaleX(playerWidth), (int) Game.scaleY(playerHeight));
+		g.setColor(playerColor);
+		if(imgNum!=0) {
+			g.clearRect((int) x, (int) y, (int) Game.scaleX(playerWidth), (int) Game.scaleY(playerHeight));
+			g.drawImage(img, (int) this.x-25, (int) this.y-25, 75,75, null);
+		} else {
+			g.fillRect((int) x, (int) y, (int) Game.scaleX(playerWidth), (int) Game.scaleY(playerHeight));
+		}
 
 	}
 
@@ -243,6 +277,10 @@ public class Player extends GameObject {
 		regen = true;
 	}
 	
+	public void activateDegen() {
+		degen = true;
+	}
+	
 	public void activateDamageResistance() {
 		damage = reducedDamageValue;
 	}
@@ -250,17 +288,24 @@ public class Player extends GameObject {
 	public void activateTriggeredAbility(Ability ability, int uses) {
 		this.ability = ability;
 		abilityUses = uses;
+		hud.updateAbilityText(ability, uses);
 	}
 	
 	public void decrementAbilityUses() {
 		abilityUses--;
+		hud.updateAbilityText(ability, abilityUses);
 		if (abilityUses < 1) {
 			ability = Ability.None;
+			hud.updateAbilityText(ability, abilityUses);
 		}
 	}
 	
 	public void activateSpeedBoost() {
 		playerSpeed *= speedBoostMod;
+	}
+	
+	public void activateTurtle() {
+		playerSpeed = playerSpeed/2;
 	}
 	
 	public void activateReducedSize() {
@@ -269,6 +314,14 @@ public class Player extends GameObject {
 
 	public void setDamage(int damage) {
 		this.damage = damage;
+	}
+	
+	public int getHealth() {
+		return health;
+	}
+	
+	public void setHealth(int x) {
+		this.health = x;
 	}
 
 	public void setPlayerSize(int size) {
@@ -307,5 +360,6 @@ public class Player extends GameObject {
 	public void setHUD(HUD newHud) {
 		hud = newHud;
 	}
+
 
 }

@@ -40,6 +40,9 @@ public class Trail extends GameObject{
 
 	}
 
+	public void setColor(Color c) {
+		color = c;
+	}
 
 	public void tick() {//slowly fades each square
 		if (alpha > life){

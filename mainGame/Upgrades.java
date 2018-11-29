@@ -35,9 +35,10 @@ public class Upgrades {
 		this.ability = "";
 	}
 
+	//UPGRADE LIST
 	public void clearScreenAbility() {
 		handler.clearEnemies();
-		player.setAbilityUses(player.getAbilityUses() - 1);
+		player.decrementAbilityUses();
 		if (player.getAbilityUses() == 0) {
 			ability = "";
 		}
@@ -63,17 +64,15 @@ public class Upgrades {
 		} else if (Spawn1to10.LEVEL_SET == 2) {
 			spawner2.skipLevel();
 		}
-		player.setAbilityUses(player.getAbilityUses() - 1);
+		player.decrementAbilityUses();
 		if (player.getAbilityUses() == 0) {
 			ability = "";
 		}
-
-		player.decrementAbilityUses();
 	}
 
 	public void freezeTimeAbility() {
 		handler.pause();
-		player.setAbilityUses(player.getAbilityUses() - 1);
+		player.decrementAbilityUses();
 		if (player.getAbilityUses() == 0) {
 			ability = "";
 		}
@@ -94,39 +93,67 @@ public class Upgrades {
 	 *            is to the image of the upgrade that was pressed by the user
 	 */
 	public void activateUpgrade(String path) {
+		System.out.println("UPGRADES CASE MATCH");
 		switch (path) {
-			case "../images/clearscreenability.png":
+			case "images/clearscreenability.png":
 				player.activateTriggeredAbility(Ability.ClearScreen, clearScreenUses);
 				break;
-			case "../images/decreaseplayersize.png":
+			case "images/decreaseplayersize.png":
 				player.activateReducedSize();
 				break;
-			case "../images/extralife.png":
+			case "images/extralife.png":
 				player.setExtraLives(player.getExtraLives() + 1);
 				break;
-			case "../images/healthincrease.png":
+			case "images/healthincrease.png":
 				player.activateDoubleHealth();
 				break;
-			case "../images/healthregeneration.png":
+			case "images/healthregeneration.png":
 				player.activateRegen();
 				break;
-			case "../images/improveddamageresistance.png":
+			case "images/improveddamageresistance.png":
 				player.activateDamageResistance();
 				break;
-			case "../images/levelskipability.png":
+			case "images/levelskipability.png":
 				player.activateTriggeredAbility(Ability.LevelSkip, levelSkipUses);
 				break;
-			case "../images/freezetimeability.png":
+			case "images/freezetimeability.png":
 				player.activateTriggeredAbility(Ability.FreezeTime, freezeTimeUses);
 				break;
-			case "../images/speedboost.png":
+			case "images/speedboost.png":
 				player.activateSpeedBoost();
 				break;
+				
+			//DOWNGRADES
+			case "images/Degeneration.png":
+				player.activateDegen();
+				break;
+			case "images/DoubleSize.png":
+				player.setPlayerSize(64);
+				break;
+			case "images/HalfHealth.png":
+				int newHealth = player.getHealth()/2;
+				if(newHealth<1) newHealth = 1;
+				player.setHealth(newHealth);
+				break;
+			case "images/OneShot.png":
+				player.setHealth(1);
+				break;
+			case "images/StartOver.png":
+				game.set1to10Level(1);
+				hud.setLevel(1);
+				break;
+			case "images/Turtle.png":
+				player.activateTurtle();
+				break;
+				
+				
 			default:
+				System.out.println("NOTHING SELECTED: " + path);
 				break;
 		}
 
 	}
+	
 
 	public void resetUpgrades() {
 		hud.resetHealth();

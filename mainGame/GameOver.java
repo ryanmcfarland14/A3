@@ -6,6 +6,8 @@ import java.awt.Graphics;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 
+import javax.swing.JOptionPane;
+
 import mainGame.Game.STATE;
 
 /**
@@ -35,6 +37,14 @@ public class GameOver {
 	public void tick() {
 		handler.clearPlayer();
 		flash();
+		
+		hud.tick();
+		
+		if(!game.getScoreSaved()){
+			String name = JOptionPane.showInputDialog("Enter your name for the leaderboard:");
+			game.getScore().addScore(hud.getScore(), name);
+			game.setScoreSaved(true);
+		}
 
 	}
 
@@ -44,6 +54,8 @@ public class GameOver {
 		} else {
 			this.hud = game.getHud();
 		}
+		this.hud.healthBar.setColor(new Color(0,0,0));
+		hud.render(g);
 		Font font = new Font("Amoebic", 1, 100);
 		Font font2 = new Font("Amoebic", 1, 60);
 		g.setFont(font);
