@@ -103,6 +103,7 @@ public class MouseListener extends MouseAdapter {
 		else if (game.gameState == STATE.Menu) {
 			// Waves Button
 			if (mouseOver(mx, my, 805, 545, 300, 55)) {
+				System.out.println("CUSTOMIZATION: "+player.getImgNum());
 				new DifficultyWindow(this);
 			}
 
@@ -118,6 +119,12 @@ public class MouseListener extends MouseAdapter {
         Sound.playButtonPress();
 				Sound.stopSoundMenu();
 				Sound.playSoundSurvival();
+			}
+			
+			//Customization
+			if(mouseOver(mx, my, 805, 480, 300, 55)) {
+				//handler.addObject(player);
+				game.gameState = STATE.Customization;
 			}
 
 			// Help Button
@@ -162,6 +169,21 @@ public class MouseListener extends MouseAdapter {
 				game.gameState = STATE.Menu;
 				return;
 			}
+		}
+		
+		// Customization Options
+		else if (game.gameState == STATE.Customization) {
+			if(mouseOver(mx,my, 300, 350, 300, 300)) {
+				player.setImgNum(1);
+				game.gameState = STATE.Menu;
+			} else if(mouseOver(mx,my, 850, 350, 300, 300)) {
+				player.setImgNum(2);
+				game.gameState = STATE.Menu;
+			} else if(mouseOver(mx,my, 1400, 350, 300, 300)) {
+				player.setImgNum(3);
+				game.gameState = STATE.Menu;
+			}
+			player.updateImg();
 		}
 	}
 	

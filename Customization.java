@@ -52,7 +52,7 @@ public class Customization {
 
 		img = null;
 		try {
-			URL imageURL = Game.class.getResource("images/LeaderBoard4.jpg");
+			URL imageURL = Game.class.getResource("images/pokemonback.png");
 			img = Toolkit.getDefaultToolkit().getImage(imageURL);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -83,19 +83,26 @@ public class Customization {
 			Font font = new Font("Amoebic", 1, (int) (100 * (Game.HEIGHT / 1080f)));
 			Font font2 = new Font("Amoebic", 1, (int) (60 * (Game.HEIGHT / 1080f)));
 			g.drawImage(img, 0, 0, Game.WIDTH, Game.HEIGHT, null);
-			drawMenuString(g, font, Color.BLACK, "Leaderboard", new int[] {Game.WIDTH/2, 100});
+			drawMenuString(g, font, Color.WHITE, "Customization", new int[] {Game.WIDTH/2, 100});
 			drawMenuString(g, font2, Color.WHITE, "Hit Backspace to return to the main menu", new int[] {Game.WIDTH/4, 200});
 	
-			score.loadScores();
-			int[] scores = score.getScores();
-			String[] names = score.getNames();
+//			drawMenuItem(g, font, Color.WHITE,
+//					new int[] {300, 350, 300, 300}, "", new int[] {0,0});
+//			drawMenuItem(g, font, Color.WHITE,
+//					new int[] {850, 350, 300, 300}, "", new int[] {0,0});	
+//			drawMenuItem(g, font, Color.WHITE,
+//					new int[] {1400, 350, 300, 300}, "", new int[] {0,0});
 			
-			for(int i = 0; i < scores.length; i++){
-				drawMenuString(g, font, Color.WHITE, 
-					Integer.toString(scores[i]), new int[] {Game.WIDTH/2+500, 300 + (100 * i)});
-				drawMenuString(g, font, Color.WHITE, 
-						names[i], new int[] {Game.WIDTH/2-322, 300 + 100 * i});
-			}
+//			score.loadScores();
+//			int[] scores = score.getScores();
+//			String[] names = score.getNames();
+//			
+//			for(int i = 0; i < scores.length; i++){
+//				drawMenuString(g, font, Color.WHITE, 
+//					Integer.toString(scores[i]), new int[] {Game.WIDTH/2+500, 300 + (100 * i)});
+//				drawMenuString(g, font, Color.WHITE, 
+//						names[i], new int[] {Game.WIDTH/2-322, 300 + 100 * i});
+//			}
 	}
 
 	private void drawMenuItem(Graphics g, Font font, Color color, 

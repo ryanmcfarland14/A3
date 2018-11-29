@@ -3,7 +3,10 @@ package mainGame;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
+import java.net.URL;
 import java.util.Random;
 import javax.swing.JOptionPane;
 
@@ -34,6 +37,9 @@ public class Player extends GameObject {
 	private Ability ability = Ability.None;
 	private int damage;
 	private int playerWidth, playerHeight;
+	private int imgNum = 0;
+	private Image img = null;
+	private Color playerColor = Color.WHITE;
 	
 	private final int reducedDamageValue = 1;
 	private final double speedBoostMod = 2;
@@ -62,6 +68,47 @@ public class Player extends GameObject {
 		this.damage = 2;
 		playerWidth = 32;
 		playerHeight = 32;
+		imgNum = 0;
+	}
+	
+	//Customization Input
+	public void updateImg() {
+		if(imgNum!=0) {
+			String newURL;
+			if(imgNum==1) {
+				newURL = "images/pika.png";
+				playerColor = Color.YELLOW;
+			} else if(imgNum==2) {
+				newURL = "images/bulb.png";	
+				playerColor = Color.CYAN;
+			} else if(imgNum==3) {
+				newURL = "images/char.png";
+				playerColor = Color.ORANGE;
+			} else {
+				return; //Add more customization options here
+			}
+			img = getImage(newURL);
+		}
+	}
+	
+	public int getImgNum() {
+		return imgNum;
+	}
+	
+	public void setImgNum(int x) {
+		imgNum = x;
+	}
+	
+	public Image getImage(String path) {
+		Image image = null;
+		try {
+			URL imageURL = Game.class.getResource(path);
+			image = Toolkit.getDefaultToolkit().getImage(imageURL);
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+
+		return image;
 	}
 	
 	public void initialize() {
@@ -99,14 +146,13 @@ public class Player extends GameObject {
 		y = Game.clamp(y, Game.scaleY(90), Game.HEIGHT - 60);
 
 		// add the trail that follows it
-		handler.addObject(new Trail(x, y, ID.Trail, Color.white, playerWidth, playerHeight, 0.05, this.handler));
+		handler.addObject(new Trail(x, y, ID.Trail, playerColor, playerWidth, playerHeight, 0.05, this.handler));
 		collision();
 		checkIfDead();
 
 		hud.tickScore();
 		hud.updateHealth(health);
 		hud.updateLivesText(extraLives);
-		
 		
 		if(regen) {
 			if(regenTick>=25) {
@@ -206,8 +252,13 @@ public class Player extends GameObject {
 	@Override
 	public void render(Graphics g) {
 
-		g.setColor(Color.blue);
-		g.fillRect((int) x, (int) y, (int) Game.scaleX(playerWidth), (int) Game.scaleY(playerHeight));
+		g.setColor(playerColor);
+		if(imgNum!=0) {
+			g.clearRect((int) x, (int) y, (int) Game.scaleX(playerWidth), (int) Game.scaleY(playerHeight));
+			g.drawImage(img, (int) this.x-25, (int) this.y-25, 75,75, null);
+		} else {
+			g.fillRect((int) x, (int) y, (int) Game.scaleX(playerWidth), (int) Game.scaleY(playerHeight));
+		}
 
 	}
 

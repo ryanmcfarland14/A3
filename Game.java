@@ -42,6 +42,7 @@ public class Game extends Canvas implements Runnable {
 	private Leaderboard leaderboard;
 	private GameOver gameOver;
 	private GameWin gameWin;
+	private Customization customizationScreen;
 	private UpgradeScreen upgradeScreen;
 	private MouseListener mouseListener;
 	private Upgrades upgrades;
@@ -56,7 +57,7 @@ public class Game extends Canvas implements Runnable {
 	 * Used to switch between each of the screens shown to the user
 	 */
 	public enum STATE {
-		Menu, Help, Game, GameOver, Upgrade, PauseMenu, Survival, Leaderboard, GameWin 
+		Menu, Help, Game, GameOver, Upgrade, PauseMenu, Survival, Leaderboard, GameWin, Customization 
 	};
 
 	/**
@@ -94,6 +95,7 @@ public class Game extends Canvas implements Runnable {
 				this.spawner2);
 		gameOver = new GameOver(this, this.handler, this.hud);
 		gameWin = new GameWin(this, this.handler, this.hud);
+		customizationScreen = new Customization(this, this.handler, this.hud, this.spawner);
 		mouseListener = new MouseListener(this, this.handler, this.hud, this.spawner, this.spawner2, this.upgradeScreen,
 				this.player, this.upgrades);
 		this.addKeyListener(new KeyInput(this.handler, this, this.hud, this.player, this.spawner, this.upgrades));
@@ -222,6 +224,8 @@ public class Game extends Canvas implements Runnable {
 //				leaderboard.tick();
 			} else if(gameState == STATE.GameWin){
 				gameWin.tick();
+			} else if(gameState == STATE.Customization){
+				customizationScreen.tick();
 			}
 		}
 	}
@@ -254,9 +258,11 @@ public class Game extends Canvas implements Runnable {
 			pauseMenu.removePrompt();
 			hud.render(g);
 			scoreSaved = false;
+			player.render(g);
 		} else if (gameState == STATE.Survival) {
 			pauseMenu.removePrompt();
 			survivalHud.render(g);
+			player.render(g);
 		} else if (gameState == STATE.Menu || gameState == STATE.Help) { // user is in help or the menu, draw the menu
 																			// and help objects
 			menu.render(g);
@@ -296,6 +302,8 @@ public class Game extends Canvas implements Runnable {
 				score.addScore(hud.getScore(), name);
 				scoreSaved = true;
 			}
+		} else if(gameState == STATE.Customization) {
+			customizationScreen.render(g);
 		}
     
 		///////// Draw things above this//////////////
@@ -367,6 +375,7 @@ public class Game extends Canvas implements Runnable {
 	}
 
 	// Add comments later --Nick
+	// Looks like you never did --Ryan
 	public static double scaleX(double screenCoordinate) {
 		return (screenCoordinate * (Game.WIDTH / 1920f));
 	}
