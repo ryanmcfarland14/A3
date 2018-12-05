@@ -42,6 +42,7 @@ public class Game extends Canvas implements Runnable {
 	private Leaderboard leaderboard;
 	private GameOver gameOver;
 	private GameWin gameWin;
+	private Customization customizationScreen;
 	private UpgradeScreen upgradeScreen;
 	private MouseListener mouseListener;
 	private Upgrades upgrades;
@@ -51,11 +52,12 @@ public class Game extends Canvas implements Runnable {
 	public static int TEMP_COUNTER;
 	private boolean paused;
 	private boolean scoreSaved;
+	private boolean extreme;
 	/**
 	 * Used to switch between each of the screens shown to the user
 	 */
 	public enum STATE {
-		Menu, Help, Game, GameOver, Upgrade, PauseMenu, Survival, Leaderboard, GameWin 
+		Menu, Help, Game, GameOver, Upgrade, PauseMenu, Survival, Leaderboard, GameWin, Customization 
 	};
 
 	/**
@@ -74,6 +76,7 @@ public class Game extends Canvas implements Runnable {
 		}
 		
 		 scoreSaved = false;
+		 extreme = false;
 		 
 		handler = new Handler();
 		hud = new HUD();
@@ -92,6 +95,7 @@ public class Game extends Canvas implements Runnable {
 				this.spawner2);
 		gameOver = new GameOver(this, this.handler, this.hud);
 		gameWin = new GameWin(this, this.handler, this.hud);
+		customizationScreen = new Customization(this, this.handler, this.hud, this.spawner);
 		mouseListener = new MouseListener(this, this.handler, this.hud, this.spawner, this.spawner2, this.upgradeScreen,
 				this.player, this.upgrades);
 		this.addKeyListener(new KeyInput(this.handler, this, this.hud, this.player, this.spawner, this.upgrades));
@@ -159,7 +163,35 @@ public class Game extends Canvas implements Runnable {
 		}
 		stop();
 	}
+	
+	//LEADERBOARD LOGIC
+	public boolean getScoreSaved() {
+		return scoreSaved;
+	}
+	
+	public Score getScore() {
+		return score;
+	}
+	
+	public void setScoreSaved(boolean val) {
+		scoreSaved = val;
+	}
+	
+	public void enableExtreme() {
+		extreme = true;
+	}
+	
+	public boolean isExtreme() {
+		return extreme;
+	}
 
+	public void resetUpgradePaths() {
+		upgradeScreen.resetPaths();
+	}
+	
+	public void resetUpgradeAdds() {
+		upgradeScreen.addPaths();
+	}
 	/**
 	 * Constantly ticking (60 times per second, used for updating smoothly). Used
 	 * for updating the instance variables (DATA) of each entity (location, health,
@@ -192,6 +224,8 @@ public class Game extends Canvas implements Runnable {
 //				leaderboard.tick();
 			} else if(gameState == STATE.GameWin){
 				gameWin.tick();
+			} else if(gameState == STATE.Customization){
+				customizationScreen.tick();
 			}
 		}
 	}
@@ -224,9 +258,11 @@ public class Game extends Canvas implements Runnable {
 			pauseMenu.removePrompt();
 			hud.render(g);
 			scoreSaved = false;
+			player.render(g);
 		} else if (gameState == STATE.Survival) {
 			pauseMenu.removePrompt();
 			survivalHud.render(g);
+			player.render(g);
 		} else if (gameState == STATE.Menu || gameState == STATE.Help) { // user is in help or the menu, draw the menu
 																			// and help objects
 			menu.render(g);
@@ -234,12 +270,13 @@ public class Game extends Canvas implements Runnable {
 			upgradeScreen.render(g);
 		} else if (gameState == STATE.GameOver) {// game is over, draw the game over screen
 			gameOver.render(g);
+			System.out.println("HEALTH: "+player.getHealth());
 			
-			if(!scoreSaved){
-				String name = JOptionPane.showInputDialog("Enter your name for the leaderboard:");
-				score.addScore(hud.getScore(), name);
-				scoreSaved = true;
-			}
+//			if(!scoreSaved){
+//				String name = JOptionPane.showInputDialog("Enter your name for the leaderboard:");
+//				score.addScore(hud.getScore(), name);
+//				scoreSaved = true;
+//			}
 		} else if(gameState == STATE.PauseMenu) {
 			switch (previousGameState) {
 				case Game:
@@ -265,6 +302,8 @@ public class Game extends Canvas implements Runnable {
 				score.addScore(hud.getScore(), name);
 				scoreSaved = true;
 			}
+		} else if(gameState == STATE.Customization) {
+			customizationScreen.render(g);
 		}
     
 		///////// Draw things above this//////////////
@@ -272,6 +311,12 @@ public class Game extends Canvas implements Runnable {
 		bs.show();
 	}
 
+	public void set1to10Level(int x) {
+		spawner.setLevelTo(x);
+		Spawn1to10.LEVEL_SET = 1;
+		tick();
+	}
+	
 	public boolean isPaused() {
 		return paused;
 	}
@@ -330,6 +375,7 @@ public class Game extends Canvas implements Runnable {
 	}
 
 	// Add comments later --Nick
+	// Looks like you never did --Ryan
 	public static double scaleX(double screenCoordinate) {
 		return (screenCoordinate * (Game.WIDTH / 1920f));
 	}

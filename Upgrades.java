@@ -35,6 +35,7 @@ public class Upgrades {
 		this.ability = "";
 	}
 
+	//UPGRADE LIST
 	public void clearScreenAbility() {
 		handler.clearEnemies();
 		player.decrementAbilityUses();
@@ -121,12 +122,38 @@ public class Upgrades {
 			case "images/speedboost.png":
 				player.activateSpeedBoost();
 				break;
+				
+			//DOWNGRADES
+			case "images/Degeneration.png":
+				player.activateDegen();
+				break;
+			case "images/DoubleSize.png":
+				player.setPlayerSize(64);
+				break;
+			case "images/HalfHealth.png":
+				int newHealth = player.getHealth()/2;
+				if(newHealth<1) newHealth = 1;
+				player.setHealth(newHealth);
+				break;
+			case "images/OneShot.png":
+				player.setHealth(1);
+				break;
+			case "images/StartOver.png":
+				game.set1to10Level(1);
+				hud.setLevel(1);
+				break;
+			case "images/Turtle.png":
+				player.activateTurtle();
+				break;
+				
+				
 			default:
 				System.out.println("NOTHING SELECTED: " + path);
 				break;
 		}
 
 	}
+	
 
 	public void resetUpgrades() {
 		hud.resetHealth();

@@ -48,7 +48,7 @@ public class KeyInput extends KeyAdapter {
 		this.speed = player.playerSpeed;
 		
 		//Go back to Menu when hit backspace on leaderboard
-		if(game.gameState == STATE.Leaderboard && key == KeyEvent.VK_BACK_SPACE){
+		if(game.gameState == STATE.Leaderboard || game.gameState == STATE.Customization && key == KeyEvent.VK_BACK_SPACE){
 			game.gameState = STATE.Menu;
 		}
 		

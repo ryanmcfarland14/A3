@@ -25,6 +25,8 @@ public class Spawn10to20 {
 	private int onScreenTimer; // used to make the level text disappear off the
 								// screen
 	private int levelsRemaining;
+	
+	private boolean hardmode = false;
 
 	private String[] side = { "left", "right", "top", "bottom" };
 	ArrayList<Integer> levels = new ArrayList<Integer>();
@@ -50,12 +52,17 @@ public class Spawn10to20 {
 		levelNumber = 11;
 		levelString = new LevelText(Game.WIDTH / 2 - 675, Game.HEIGHT / 2 - 200, "Level " + levelNumber,
 				ID.Levels1to10Text);
+		hardmode = false;
 	}
 
 	public void addLevels() {
 		for (int i = 1; i <= 10; i++) {
 			levels.add(i);
 		}
+	}
+	
+	public void enableHardMode() {
+		hardmode = true;
 	}
 
 	public void tick() {
@@ -394,7 +401,7 @@ public class Spawn10to20 {
 				handler.addObject(new BossEye(Game.WIDTH / 2 + 50, Game.HEIGHT / 2 + 50, ID.BossEye, handler, 9));
 				tempCounter++;
 			}
-
+		if(hardmode) spawnTimer--;
 		} else if(levelNumber > 20){
 			
 		}
@@ -454,5 +461,3 @@ public class Spawn10to20 {
 	}
 
 }
-
- 

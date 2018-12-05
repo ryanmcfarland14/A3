@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Random;
 
-import mainGame.HUD.HUDText;
-
 public class Survival {
 	private Handler handler;
 	private SurvivalHUD hud;
@@ -18,8 +16,7 @@ public class Survival {
 	private double difficulty = 0;
 	private LinkedList<GameObject> createdEnemies;
 	private LinkedList<GameObject> enemyWaitingList;
-//	private int score;
-	//protected HUDText scoreText;
+	
 	public Survival(Handler handler, SurvivalHUD hud, Game game, Player player) {
 		this.handler = handler;
 		this.hud = hud;
@@ -43,16 +40,9 @@ public class Survival {
 
 	public void tick() {
 		incrementTimer();
-	//	tickScore();
 		//logToConsole();
 	}
-/*	public void tickScore() {
-		score++;
-		updateScoreText(score);
-	}
-	public void updateScoreText(int score) {
-		scoreText.setText("Score: " + score);
-	}*/
+	
 	private void incrementTimer() {
 		hud.setDifficulty((int) difficulty);
 		levelTimer++;
@@ -143,7 +133,6 @@ public class Survival {
 			}
 			return createEnemy(enemyType);
 		}
-		
 		
 		public GameObject createEnemy(int enemyType) {
 			/*

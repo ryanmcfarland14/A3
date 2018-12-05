@@ -5,10 +5,9 @@ package mainGame;
  * @author Brandon Loehle
  * 5/30/16
  */
-public enum ID { //if you want to add images, animations
+public enum ID {
 
 	Player,
-	PlayerBullets(),
 	Trail(),
 	BossEye(),
 	EnemyFast(),

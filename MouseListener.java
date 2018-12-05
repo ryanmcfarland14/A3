@@ -103,12 +103,8 @@ public class MouseListener extends MouseAdapter {
 		else if (game.gameState == STATE.Menu) {
 			// Waves Button
 			if (mouseOver(mx, my, 805, 545, 300, 55)) {
-				handler.object.clear();
-				game.gameState = STATE.Game;
-				player.initialize();
-				handler.addObject(player);
-				Sound.stopSoundMenu();
-				Sound.playSoundWaves();
+				System.out.println("CUSTOMIZATION: "+player.getImgNum());
+				new DifficultyWindow(this);
 			}
 
 			// Survival Button
@@ -123,6 +119,12 @@ public class MouseListener extends MouseAdapter {
         Sound.playButtonPress();
 				Sound.stopSoundMenu();
 				Sound.playSoundSurvival();
+			}
+			
+			//Customization
+			if(mouseOver(mx, my, 805, 480, 300, 55)) {
+				//handler.addObject(player);
+				game.gameState = STATE.Customization;
 			}
 
 			// Help Button
@@ -167,6 +169,44 @@ public class MouseListener extends MouseAdapter {
 				game.gameState = STATE.Menu;
 				return;
 			}
+		}
+		
+		// Customization Options
+		else if (game.gameState == STATE.Customization) {
+			if(mouseOver(mx,my, 300, 350, 300, 300)) {
+				player.setImgNum(1);
+				game.gameState = STATE.Menu;
+			} else if(mouseOver(mx,my, 850, 350, 300, 300)) {
+				player.setImgNum(2);
+				game.gameState = STATE.Menu;
+			} else if(mouseOver(mx,my, 1400, 350, 300, 300)) {
+				player.setImgNum(3);
+				game.gameState = STATE.Menu;
+			}
+			player.updateImg();
+		}
+	}
+	
+	//New Wave Start (1=easy, 4=extreme)
+	public void wavesNewStart(int difficulty) {
+		System.out.println("Difficulty Selected: " + difficulty);
+		handler.object.clear();
+		game.gameState = STATE.Game;
+		player.initialize();
+		handler.addObject(player);
+		Sound.stopSoundMenu();
+		Sound.playSoundWaves();
+		
+		//Apply difficulty (Normal is default)
+		if(difficulty==1) { //Easy
+			player.setExtraLives(2);
+		} else if(difficulty==3) { //Hard
+			spawner.enableHardMode();
+			spawner2.enableHardMode();
+		} else if(difficulty==4) { //EXTREME
+			spawner.enableHardMode();
+			spawner2.enableHardMode();
+			game.enableExtreme();
 		}
 	}
 

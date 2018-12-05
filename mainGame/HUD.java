@@ -69,6 +69,14 @@ public class HUD {
 		}
 	}
 
+	public int getHealthBarSize() {
+		return healthBar.width;
+	}
+	
+	public HUDElement getHealthBar() {
+		return healthBar;
+	}
+	
 	public void updateScoreColor(Color color) {
 		this.scoreColor = color;
 	}
@@ -102,6 +110,7 @@ public class HUD {
 				abilityName = "Level Skips:";
 				break;
 			default:
+				System.out.println("NOTHING TO SHOW");
 				break;
 		}
 		if (ability == Player.Ability.None) {
@@ -188,6 +197,11 @@ public class HUD {
 		}
 		
 		
+	}
+	
+	public void dead() {
+		healthBar.setWidth(0);
+		healthBar.setColor(new Color(0,0,0));
 	}
 	
 	protected class HUDRectangle extends HUDElement {
