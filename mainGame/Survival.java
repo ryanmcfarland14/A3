@@ -93,7 +93,7 @@ public class Survival {
 	}
 	
 	private void removeEnemy() {
-		hud.setScore((int) (hud.getScore() + (difficulty * factory.getScoreFactor(createdEnemies.peekFirst().id))));
+	    hud.setScore((int) (hud.getScore() + (difficulty * factory.getScoreFactor(createdEnemies.peekFirst().id))));
 		handler.removeObject(createdEnemies.removeFirst());
 	}
 	

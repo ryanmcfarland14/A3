@@ -56,14 +56,15 @@ public class MouseListener extends MouseAdapter {
 				upgrades.resetUpgrades();
 				player.initialize();
 				hud.setLevel(1);
-				spawner.restart();
+				//spawner.restart();
+				spawner.addLevels();
 				spawner2.restart(); //added
 	  			spawner2.addLevels();
 	  			handler.object.clear();
 	  			Spawn1to10.LEVEL_SET = 1;
 	  			game.gameState = STATE.Game;
 	  			 handler.addObject(player);
-	  			player.setShooting(true);
+	  		//	player.setShooting(true);
 	  			//setleveltimer to 0
 	  			
 
@@ -75,8 +76,8 @@ public class MouseListener extends MouseAdapter {
 				bulletX = ((this.bulletSpeed / distance) * diffX);
 				bulletY = ((this.bulletSpeed / distance) * diffY);
 				
-				player.setBulletX(bulletX);
-				player.setBulletY(bulletY);
+				//player.setBulletX(bulletX);
+				//player.setBulletY(bulletY);
 
 			} else if (game.previousGameState == STATE.Survival) {
 				handler.object.clear();

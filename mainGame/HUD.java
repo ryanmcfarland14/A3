@@ -61,6 +61,7 @@ public class HUD {
 	
 	public void tick() {
 		this.greenValue = Game.clamp(greenValue, 0, 255);	
+	
 	}
 
 	public void render(Graphics g) {
@@ -75,6 +76,9 @@ public class HUD {
 
 	public void updateHealth(int health) {
 		healthBar.setWidth(health * 4);
+		if (health==0){
+			HUDElementList.remove(healthBar);
+		}
 	}
 	
 	public void updateScoreText(int score) {

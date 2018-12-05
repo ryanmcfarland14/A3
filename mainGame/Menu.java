@@ -108,6 +108,7 @@ public class Menu {
 			//Leaderboard
 			drawMenuItem(g, font, Color.white, new int[] {805, 675, 300, 55}, 
 				"", new int[] {1075, 900});
+			
 		}
 	}
 

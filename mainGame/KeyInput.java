@@ -36,6 +36,7 @@ public class KeyInput extends KeyAdapter {
 		this.hud = hud;
 		this.spawner = spawner;
 		this.upgrades = upgrades;
+		
 		keyDown[0] = false;
 		keyDown[1] = false;
 		keyDown[2] = false;
@@ -62,13 +63,10 @@ public class KeyInput extends KeyAdapter {
 				spawner.restart();
 				spawner.addLevels();
 				spawner.tick();
-				game.unPause();
-				System.out.println("H pressed"); //now here
-				spawner2.tick(); //not working
-			/*	originally was here 
-			 * game.unPause();
+				game.unPause(); 
 				System.out.println("H pressed");
-				*/
+			    spawner2.tick(); 
+			    
 			}
 			
 	
@@ -131,8 +129,6 @@ public class KeyInput extends KeyAdapter {
 				if (key == KeyEvent.VK_A) {
 					tempObject.setVelX(-(this.speed));
 					keyDown[1] = true;
-				//	System.out.println("In A");
-				
 				}
 				if (key == KeyEvent.VK_S) {
 					tempObject.setVelY(this.speed);
@@ -163,7 +159,9 @@ public class KeyInput extends KeyAdapter {
 					}
 				}
 				
-				
+				if(key == KeyEvent.VK_8) {
+					
+				}
 				
 				if(key == KeyEvent.VK_P) {
 					if(!game.isPaused()) {

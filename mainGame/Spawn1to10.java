@@ -460,9 +460,9 @@ public class Spawn1to10 {
 			System.out.println("levels remaining:" +levelsRemaining);
 		} else if (levelsRemaining == 0) {
 			LEVEL_SET++;
-			System.out.println("lvlremaining0");
+		
 			game.gameState = STATE.Upgrade;
-			System.out.println("levels remaining:" +levelsRemaining);
+		
 		}
 	}
 	

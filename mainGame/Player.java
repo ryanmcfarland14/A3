@@ -136,8 +136,9 @@ public class Player extends GameObject {
 	}
 	public void checkIfDead() {
 		if (health <= 0) {// player is dead, game over!
-
+			
 			if (extraLives == 0 && game.gameState == STATE.Survival) {
+				
 				game.previousGameState = game.gameState;
 				game.gameState = STATE.GameOver;
 				Sound.stopSoundMenu();
@@ -146,6 +147,7 @@ public class Player extends GameObject {
 			}
 			
 			if (extraLives == 0 && game.gameState == STATE.Game ) {
+				
 				game.previousGameState = game.gameState;
 				game.gameState = STATE.GameOver;
 				Sound.stopSoundMenu();
@@ -196,7 +198,7 @@ public class Player extends GameObject {
 							hud.updateScoreColor(Color.red);
 						
 				}
-				hud.updateHealth(health);
+				
 
 			}
 			if(health == 40){
@@ -211,12 +213,13 @@ public class Player extends GameObject {
 				if (this.y <= 138 && tempObject.isMoving) {
 					health -= 2;
 					hud.updateScoreColor(Color.red);
-					System.out.println("Get out");
+					
 				}
 			}
 
 		}
 	}
+	/*
 	public void setShooting(boolean shooting) {
 		this.isShooting = shooting;
 	}
@@ -231,7 +234,7 @@ public class Player extends GameObject {
 
 	public void setBulletY(double bulletY) {
 		this.bulletY = bulletY;
-	}
+	}*/
 
 	@Override
 	public void render(Graphics g) {

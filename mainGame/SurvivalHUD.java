@@ -58,10 +58,10 @@ public class SurvivalHUD extends HUD{
 	public void updateScoreColor(Color color) {
 		this.scoreColor = color;
 	}
-
-	public void setScore(int score) {
+	
+	/*public void setScore(int score) {
 		this.score = score;
-	}
+	}*/
 
 	public int getScore() {
 		return score;
@@ -69,6 +69,7 @@ public class SurvivalHUD extends HUD{
 
 	@Override
 	public void tickScore() {
+		//score++;
 		updateScoreText(score);
 		updateLevelText(difficulty);
 	}
